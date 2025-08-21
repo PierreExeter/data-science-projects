@@ -1,18 +1,20 @@
-# Titanic data set - predicting the survival of passengers
+# Titanic Survival Prediction 
+
+This project predicts the survival during the titanic disaster based on socio-economic passengers data. The projects features data cleaning, feature engineering, one-hot encoding, feature selection and classifier fitting. The best classifier is Random Forest, with a train accuracy of 0.98 and an F1-score of 0.98. The kaggle submission scores 0.77 on the test set.
 
 ## Install
 
-Install Anaconda or Miniconda and install the `py-data` environment with :
+Install Anaconda or Miniconda, install and activate the `py-data` environment.
 
 ```
 conda env create -f environment.yml 
+conda activate py-data
 ```
 
 ## Run the notebook
 
-
 ```
-jupyter notebook Titanic.ipynb
+jupyter lab
 ```
 
 ## Data Set
