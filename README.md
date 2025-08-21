@@ -4,11 +4,11 @@ Welcome to my data science projects repository! This repository contains a colle
 
 ## Projects
 
-1. Titanic Survival Prediction 
+1. [Titanic Survival Prediction](/1_titanic)
 
-- Description : This project predicts the survival during the titanic disaster based on socio-economic passengers data.
-- Tools used : data cleaning, feature engineering, one-hot encoding, feature selection and classifier fitting. 
-- Results : The best classifier is Random Forest, with a train accuracy of 0.98 and an F1-score of 0.98. The kaggle submission scores 0.77 on the test set.
+- **Description** : This project predicts the survival during the titanic disaster based on socio-economic passengers data.
+- **Tools used** : data cleaning, feature engineering, one-hot encoding, feature selection and classifier fitting. 
+- **Results** : The best classifier is Random Forest, with a train accuracy of 0.98 and an F1-score of 0.98. The kaggle submission scores 0.77 on the test set.
 
 
 
