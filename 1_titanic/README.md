@@ -1,6 +1,10 @@
 # Titanic Survival Prediction 
 
-This project predicts the survival during the titanic disaster based on socio-economic passengers data. The projects features data cleaning, feature engineering, one-hot encoding, feature selection and classifier fitting. The best classifier is Random Forest, with a train accuracy of 0.98 and an F1-score of 0.98. The kaggle submission scores 0.77 on the test set.
+This project predicts the survival during the titanic disaster based on socio-economic passengers data. It is a supervised classification problem.
+
+The projects features data cleaning, feature engineering, one-hot encoding, feature selection and classifier fitting. The best classifier is Random Forest, with a train accuracy of 0.98 and an F1-score of 0.98. The kaggle submission scores 0.77 on the test set.
+
+The associated Kaggle competition can be found [here](https://www.kaggle.com/competitions/titanic/overview).
 
 ## Install
 
