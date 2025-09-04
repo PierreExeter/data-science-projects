@@ -1,6 +1,9 @@
 # House Prices Prediction
 
+
 The goal of this project is to predict the sales price of residential homes in Ames, Iowa, USA based on various house characteristics. It is a supervised regression problem.
+
+![streamlit_app_screenshot](img/streamlit_app_screenshot_2.png)
 
 
 TO CHANGE
@@ -26,14 +29,14 @@ jupyter lab
 
 ## EDA in Streamlit
 
-Run the Streamlit app for exploring the different features.
-This tool helps with identifying 
+Run the Streamlit app for exploring patterns in the different features. 
 
 ```
 streamlit run streamlit_app.py
 ```
 
 ![streamlit_app_screenshot](img/streamlit_app_screenshot.png)
+
 
 ## Metric
 Submissions are evaluated on Root-Mean-Squared-Error (RMSE) between the logarithm of the predicted value and the logarithm of the observed sales price. (Taking logs means that errors in predicting expensive houses and cheap houses will affect the result equally.)
