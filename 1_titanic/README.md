@@ -8,7 +8,7 @@ The associated Kaggle competition can be found [here](https://www.kaggle.com/com
 
 ## Install
 
-Install Anaconda or Miniconda, install and activate the `py-data` environment.
+Install Anaconda or Miniconda, create and activate the `py-data` environment.
 
 ```
 conda env create -f environment.yml 

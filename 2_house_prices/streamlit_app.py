@@ -2,13 +2,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
-from sklearn.preprocessing import StandardScaler
 from scipy import stats
-from scipy.stats import norm, shapiro, anderson, kstest, normaltest
+from scipy.stats import norm, shapiro, anderson, kstest, normaltest, f_oneway, kruskal, pearsonr, spearmanr
 import streamlit as st
 
 
-# TODO: add count of NaN, zeros and correlation coeff for categorical features (anova or kruskal wallis)
 
 # load the data
 train = pd.read_csv("data/train.csv", header=0)
@@ -109,6 +107,45 @@ def test_normality(df, col, alpha=0.05):
     
 
 
+def correlation_categorical(df, cat_col, alpha=0.05):
+    """
+    Check relationship between categorical and 'SalePrice' (numerical) 
+    using ANOVA (if normal distribution) and kruskal wallis (non normally distributed)
+    """
+    
+    # Group data by categories
+    groups = [group[1]['SalePrice'].values for group in df.groupby(cat_col)]
+    
+    if len(groups) < 2:
+        return None, {"error": "Need at least 2 categories"}
+    
+    # anova
+    f_stat, p_value_anova = f_oneway(*groups)
+    
+    # kruskal wallis
+    h_stat, p_value_kw = kruskal(*groups)
+    
+    return p_value_anova < alpha, p_value_kw < alpha
+
+
+def correlation_numerical(df, col, alpha=0.05):
+    """
+    Check linear correlation between two numeric features using Pearson correlation
+    """
+    
+    data = df[[col, 'SalePrice']].dropna()
+    
+    # Pearson (Linear Relationship, variables are normally distributed)
+    corr, p_value_pearson = pearsonr(data[col], data['SalePrice'])
+    
+    # Spearman (Monotonic Relationship)
+    corr, p_value_spearman = spearmanr(data[col], data['SalePrice'])
+    
+    return p_value_pearson < alpha, p_value_spearman < alpha
+ 
+
+
+
 def calc_metrics(df, col):
     """ calculate metrics for dataframe df and feature col """
 
@@ -121,13 +158,22 @@ def calc_metrics(df, col):
         results['skew'] = df[col].dropna().skew()
         results['kurt'] = df[col].dropna().kurt()
         results['normal'] = test_normality(df, col)
-        results['correlation'] = df[[col, 'SalePrice']].corr().iloc[0, 1]
+        results['correlation_pearson'], results['correlation_spearman'] = correlation_numerical(df, col)
+        results['zeros_%'] = ((df[col] == 0).sum() / len(df[col]) * 100).round(1)
+        results['NaN_%'] = (df[col].isna().sum() / len(df[col]) * 100).round(1)
+        
       
     else:
+    	# for qualitative features
         results['mode'] = df[col].mode().iloc[0]
+        results['zeros_%'] = ((df[col] == 0).sum() / len(df[col]) * 100).round(1)
+        results['NaN_%'] = (df[col].isna().sum() / len(df[col]) * 100).round(1)
+        results['NaN_%'] = (df[col].isna().sum() / len(df[col]) * 100).round(1)
+        results['correlation_anova'], results['correlation_kw'] = correlation_categorical(df, col)
 
     return results
    
+  
    
 
 ### STREAMLIT APP
@@ -150,7 +196,7 @@ st.header('Target feature : SalePrice')
 results = calc_metrics(train, 'SalePrice')
 
 with st.container(horizontal=True, gap="medium"):
-    cols = st.columns(3, gap="medium")
+    cols = st.columns(2, gap="medium")
     
     with cols[0]:      
         fig, ax = plt.subplots(figsize=(10, 6))
@@ -158,20 +204,38 @@ with st.container(horizontal=True, gap="medium"):
         plt.tight_layout()
         st.pyplot(fig)
         plt.close(fig)
-    
+        
     with cols[1]:
+        fig, ax = plt.subplots(figsize=(10, 6))
+        stats.probplot(train['SalePrice'], dist="norm", plot=ax)
+        ax.set_title('Probability plot - train set')
+        plt.tight_layout()
+        st.pyplot(fig)
+        plt.close(fig)
+
+with st.container(horizontal=True, gap="medium"):
+    cols = st.columns(5, gap="medium")
     
+    with cols[0]:
         st.metric("Max", f"{results['max']}")
         st.metric("Min", f"{results['min']}")
+    
+    with cols[1]:
         st.metric("Mean", f"{results['mean']:0.0f}")
+        st.metric("Type", 'Quantitative feature')
     
     with cols[2]:
-    
         st.metric("Skewness", f"{results['skew']:0.1f}")
         st.metric("Kurtosis", f"{results['kurt']:0.1f}")
         st.metric("Normally distributed", results['normal'])
-        st.metric("Correlation coeff with SalePrice", results['correlation'])
     
+    with cols[3]:
+        st.metric("missing values : 0 (%)", f"{results['zeros_%']:0.1f}")
+        st.metric("missing values : NaN (%)", f"{results['NaN_%']:0.1f}")
+
+    with cols[4]:
+        st.metric("Correlation with SalePrice (Pearson)", f"{results['correlation_pearson'][0]}") 
+        st.metric("Correlation with SalePrice (Spearman)", f"{results['correlation_spearman'][0][0]}")
 
         
 st.header('Univariate Analysis')
@@ -224,11 +288,8 @@ if selected_col in quantitative:
             plt.close(fig)     
 
     
-        
-
 st.header('Bivariate Analysis')
 
-metrics_results = calc_metrics(train, selected_col)
 
 with st.container(horizontal=True, gap="medium"):
     cols = st.columns(2, gap="medium")
@@ -242,20 +303,47 @@ with st.container(horizontal=True, gap="medium"):
         plt.close(fig)
 
 
-    with cols[1]:
-        if selected_col in quantitative:
+results = calc_metrics(train, selected_col)
+
+if selected_col in quantitative:
+
+    with st.container(horizontal=True, gap="medium"):
+        cols = st.columns(5, gap="medium")
+    
+        with cols[0]:
+            st.metric("Max", f"{results['max']}")
+            st.metric("Min", f"{results['min']}")
+    
+        with cols[1]:
+            st.metric("Mean", f"{results['mean']:0.0f}")
+            st.metric("Type", 'Quantitative feature')
+    
+        with cols[2]:
+            st.metric("Skewness", f"{results['skew']:0.1f}")
+            st.metric("Kurtosis", f"{results['kurt']:0.1f}")
+            st.metric("Normally distributed", results['normal'])
+    
+        with cols[3]:
+            st.metric("missing values : 0 (%)", f"{results['zeros_%']:0.1f}")
+            st.metric("missing values : NaN (%)", f"{results['NaN_%']:0.1f}")
+
+        with cols[4]:
+            st.metric("Correlation with SalePrice (Pearson)", f"{results['correlation_pearson']}") 
+            st.metric("Correlation with SalePrice (Spearman)", f"{results['correlation_spearman']}")
             
-            st.metric("Max", f"{metrics_results['max']}")
-            st.metric("Min", f"{metrics_results['min']}")
-            st.metric("Mean", f"{metrics_results['mean']:0.0f}")
-            st.metric("Skewness", f"{metrics_results['skew']:0.1f}")
-            st.metric("Kurtosis", f"{metrics_results['kurt']:0.1f}")
-            st.metric("Normally distributed", metrics_results['normal'])
-            st.metric("Correlation coeff with SalePrice", metrics_results['correlation'])
+else:    
+    with st.container(horizontal=True, gap="medium"):
+        cols = st.columns(3, gap="medium")
+    
+        with cols[0]:
+            st.metric("Most common value", f"{results['mode']}")
+            st.metric("Type", 'Qualitative feature')
             
-        else:
-            st.metric("Mode", f"{metrics_results['mode']}")
-        
-            
-        
+        with cols[1]:
+            st.metric("missing values : 0 (%)", f"{results['zeros_%']:0.1f}")
+            st.metric("missing values : NaN (%)", f"{results['NaN_%']:0.1f}")   
+             
+        with cols[2]:
+            st.metric("Correlation with SalePrice (ANOVA)", f"{results['correlation_anova']}") 
+            st.metric("Correlation with SalePrice (Kruskal-Wallis)", f"{results['correlation_kw']}")
  

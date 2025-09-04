@@ -11,7 +11,7 @@ The associated Kaggle competition can be found [here](https://www.kaggle.com/c/h
 
 ## Install
 
-Install Anaconda or Miniconda, install and activate the `py-data` environment.
+Install Anaconda or Miniconda, create and activate the `py-data` environment.
 
 ```
 conda env create -f environment.yml 
@@ -38,12 +38,8 @@ streamlit run streamlit_app.py
 ## Metric
 Submissions are evaluated on Root-Mean-Squared-Error (RMSE) between the logarithm of the predicted value and the logarithm of the observed sales price. (Taking logs means that errors in predicting expensive houses and cheap houses will affect the result equally.)
 
-## Data Set
 
-The training set is used to build the machine learning models.
-The test is used to see how well your model performs on unseen data.
-
-### Features and target variable
+## Features and target variable
 
 - *SalePrice*: The property's sale price in dollars. This is the target variable that you're trying to predict.
 
