@@ -44,7 +44,7 @@ Submissions are evaluated on Root-Mean-Squared-Error (RMSE) between the logarith
 
 ## Features and target variable
 
-- *SalePrice*: The property's sale price in dollars. This is the target variable that you're trying to predict.
+- TARGET VARIABLE : *SalePrice*: The property's sale price in dollars.
 
 - MSSubClass: The building class
 - MSZoning: The general zoning classification
