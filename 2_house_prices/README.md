@@ -6,9 +6,7 @@ The goal of this project is to predict the sales price of residential homes in A
 ![streamlit_app_screenshot](img/streamlit_app_screenshot_2.png)
 
 
-TO CHANGE
-The project features data cleaning, feature engineering, one-hot encoding, feature selection and classifier fitting. The best classifier is Random Forest, with a train accuracy of 0.98 and an F1-score of 0.98. The kaggle submission scores 0.77 on the test set.
-TO CHANGE
+The project features exploratory data analysis, data cleaning (handling outliers and missing values), feature engineering, target encoding, feature selection and model validation, hyperparameter tuning and regularization. The best regression model is Gradient Boosting, with a Root Mean Square Error of 0.12 on the train set. The kaggle submission scores 0.13 on the test set.
 
 The associated Kaggle competition can be found [here](https://www.kaggle.com/c/house-prices-advanced-regression-techniques).
 
@@ -39,7 +37,8 @@ streamlit run streamlit_app.py
 
 
 ## Metric
-Submissions are evaluated on Root-Mean-Squared-Error (RMSE) between the logarithm of the predicted value and the logarithm of the observed sales price. (Taking logs means that errors in predicting expensive houses and cheap houses will affect the result equally.)
+
+Submissions are evaluated on Root-Mean-Squared-Error (RMSE) between the logarithm of the predicted value and the logarithm of the observed sales price.
 
 
 ## Features and target variable
